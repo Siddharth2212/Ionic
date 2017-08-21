@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import {DishProvider} from "../dish/dish";
 import {Observable} from "rxjs/Observable";
 import {Dish} from "../../shared/dish";
+import {Storage} from "@ionic/storage";
 
 /*
   Generated class for the FavoriteProvider provider.
@@ -15,32 +16,58 @@ import {Dish} from "../../shared/dish";
 export class FavoriteProvider {
   favorites: Array<any>;
 
-  constructor(public http: Http, private dishservice: DishProvider) {
+  constructor(public http: Http, private dishservice: DishProvider, private storage: Storage) {
     console.log('Hello FavoriteProvider Provider');
     this.favorites = [];
   }
 
-  addFavorite(id: number): boolean {
-    if(!this.isFavorite(id)){
+  addFavorite(id: number, favorites: number[]): boolean {
+    if(!this.isFavorite(id, favorites)){
       this.favorites.push(id);
+      //this.storage.remove('favorites');
+      this.storage.get('favorites').then(favorites=>{
+        if(favorites == null || typeof favorites == 'undefined'){
+          var temp = [];
+          temp.push(id);
+          this.storage.set('favorites', temp);
+        }
+        else{
+          favorites.push(id);
+          this.storage.set('favorites', favorites);
+        }
+      });
       return true;
     }
   }
 
-  isFavorite(id: number): boolean{
-    return this.favorites.some(el => el === id);
+  isFavorite(id: number, favorites: number[]): boolean{
+    if(favorites == null || typeof favorites == 'undefined'){
+      return false;
+    }
+    else{
+      return favorites.some(el => el === id);
+    }
   }
 
-  getFavorites() : Observable<Dish[]>{
+  getFavorites2() : Observable<Dish[]>{
     return this.dishservice.getDishes()
       .map(dishes => dishes.filter(dish => this.favorites.some(el => el == dish.id)))
   }
 
-  deleteFavorite(id: number) : Observable<Dish[]> {
-    let index = this.favorites.indexOf(id);
-    if (index >= 0) {
-      this.favorites.splice(index,1);
-      return this.getFavorites();
+  getFavorites(favorites: number[]) : Observable<Dish[]>{
+    return this.dishservice.getDishes()
+      .map(dishes => dishes.filter(dish => favorites.some(el => el == dish.id)))
+  }
+
+  deleteFavorite(id: number, favorites: number[]) : Observable<Dish[]> {
+    let index = favorites.indexOf(id);
+    console.log('INDEX____'+index);
+    console.log(id);
+    console.log(favorites);
+    if (index !== -1 ) {
+      favorites.splice(index,1);
+      this.storage.set('favorites', favorites);
+      return this.getFavorites(favorites);
     }
     else {
       console.log('Deleting non-existant favorite', id);

@@ -5,6 +5,7 @@ import {
 } from 'ionic-angular';
 import {Dish} from "../../shared/dish";
 import {FavoriteProvider} from "../../providers/favorite/favorite";
+import {Storage} from "@ionic/storage";
 
 /**
  * Generated class for the FavoritesPage page.
@@ -21,19 +22,26 @@ import {FavoriteProvider} from "../../providers/favorite/favorite";
 export class FavoritesPage implements OnInit{
   favorites: Dish[];
   errmsg: string;
+  BaseURL;
 
   constructor(public navCtrl: NavController,
               private favoriteservice: FavoriteProvider,
               private toastCtrl: ToastController,
               private loadingCtrl: LoadingController,
               private alertCtrl: AlertController,
-              @Inject('BaseURL') private BaseURL,
+              @Inject('BaseURL') private BaseURL2,
+              private storage: Storage,
               public navParams: NavParams) {
+    this.BaseURL = this.BaseURL2;
   }
 
   ngOnInit() {
-    this.favoriteservice.getFavorites()
-      .subscribe(favorites => this.favorites = favorites, error => this.errmsg = error);
+    this.storage.get('favorites').then(favorites=>{
+      this.favoriteservice.getFavorites(favorites)
+        .subscribe(favorites => {
+          this.favorites = favorites;
+        }, error => this.errmsg = error);
+    });
   }
 
   ionViewDidLoad() {
@@ -64,17 +72,28 @@ export class FavoritesPage implements OnInit{
               message: 'Dish ' + id + ' deleted successfully',
               duration: 3000});
             loading.present();
-            this.favoriteservice.deleteFavorite(id)
-              .subscribe(favorites => {this.favorites = favorites; loading.dismiss(); toast.present(); } ,
-                errmess =>{ this.errmsg = errmess; loading.dismiss(); });
+            this.storage.get('favorites').then(favorites=>{
+              this.favoriteservice.deleteFavorite(id, favorites)
+                .subscribe(favorites => {
+                  var favoritesIds = favorites.map(function (dish) {
+                    return dish['id'];
+                  });
+                  this.storage.set('favorites', favoritesIds);
+                  loading.dismiss();
+                  toast.present();
+                  item.close();
+                  } ,
+                  errmess =>{
+                  this.errmsg = errmess; loading.dismiss();
+
+                });
+            });
           }
         }
       ]
     });
 
     alert.present();
-
-    item.close();
 
   }
 

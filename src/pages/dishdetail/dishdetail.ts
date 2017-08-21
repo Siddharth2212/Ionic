@@ -1,12 +1,12 @@
 import {
-  ActionSheetController, IonicPage, ModalController, NavController, NavParams,
+  ActionSheetController, AlertController, IonicPage, LoadingController, ModalController, NavController, NavParams,
   ToastController
 } from 'ionic-angular';
 import { Component, Inject } from '@angular/core';
 import { Dish } from '../../shared/dish';
-import { Comment } from '../../shared/comment';
 import {FavoriteProvider} from "../../providers/favorite/favorite";
 import {CommentPage} from "../comment/comment";
+import {Storage} from "@ionic/storage";
 
 /**
  * Generated class for the DishdetailPage page.
@@ -25,21 +25,28 @@ export class DishdetailPage {
   numcomments: number;
   avgstars: String;
   favorite: boolean = false;
+  BaseURL: string;
 
   constructor(public navCtrl: NavController,
               private favoriteservice: FavoriteProvider,
               public navParams: NavParams,
               private toastCtrl: ToastController,
               private actionSheetCtrl: ActionSheetController,
+              private loadingCtrl: LoadingController,
+              private alertCtrl: AlertController,
               private modalCtrl: ModalController,
-              @Inject('BaseURL') private BaseURL) {
+              private storage: Storage,
+              @Inject('BaseURL') private BaseURL2) {
+    this.BaseURL = this.BaseURL2;
     this.dish = navParams.get('dish');
     this.numcomments = this.dish.comments.length;
 
     let total = 0;
     this.dish.comments.forEach(comment => total+= comment.rating);
     this.avgstars = (total/this.numcomments).toFixed(2);
-    this.favorite = this.favoriteservice.isFavorite(this.dish.id);
+    this.storage.get('favorites').then(favorites => {
+      this.favorite = this.favoriteservice.isFavorite(this.dish.id, favorites);
+    });
   }
 
   ionViewDidLoad() {
@@ -48,11 +55,59 @@ export class DishdetailPage {
 
   addToFavorites() {
     console.log('Adding to Favorites', this.dish.id);
-    this.favorite = this.favoriteservice.addFavorite(this.dish.id);
+    this.storage.get('favorites').then(favorites=>{
+      this.favorite = this.favoriteservice.addFavorite(this.dish.id, favorites);
+    });
     this.toastCtrl.create({
       message: 'Dish ' + this.dish.id + ' added as favorite successfully',
       position: 'middle',
       duration: 3000}).present();
+  }
+
+  deleteFavorite() {
+    console.log('delete', this.dish.id);
+
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Delete',
+      message: 'Do you want to delete Dish '+ this.dish.id,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Delete cancelled');
+          }
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            let loading = this.loadingCtrl.create({
+              content: 'Deleting . . .'
+            });
+            let toast = this.toastCtrl.create({
+              message: 'Dish ' + this.dish.id + ' deleted successfully',
+              duration: 3000});
+            loading.present();
+            this.storage.get('favorites').then(favorites=>{
+              this.favoriteservice.deleteFavorite(this.dish.id, favorites)
+                .subscribe(favorites => {
+                    var temp = favorites.map(function (dish) {
+                      return dish['id'];
+                    });
+                    this.storage.set('favorites', temp);
+                    this.favorite = false;
+                    loading.dismiss();
+                    toast.present(); } ,
+                  errmess =>{
+                  });
+            });
+          }
+        }
+      ]
+    });
+
+    alert.present();
+
   }
 
   openActionSheet() {

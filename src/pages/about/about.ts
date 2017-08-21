@@ -18,8 +18,10 @@ import {Leader} from "../../shared/leader";
 export class AboutPage implements OnInit{
   leaders: Leader[];
   leaderErrMsg: String;
+  BaseURL;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private leaderservice: LeaderProvider, @Inject('BaseURL') private BaseURL) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private leaderservice: LeaderProvider, @Inject('BaseURL') private BaseURL2) {
+    this.BaseURL = this.BaseURL2;
   }
 
   ionViewDidLoad() {
