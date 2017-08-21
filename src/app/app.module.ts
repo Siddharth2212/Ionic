@@ -23,6 +23,7 @@ import {baseURL} from '../shared/baseurl';
 import { FavoriteProvider } from '../providers/favorite/favorite';
 import {CommentPage} from "../pages/comment/comment";
 import {LoginPage} from "../pages/login/login";
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import {LoginPage} from "../pages/login/login";
     LeaderProvider,
     PromotionProvider,
     {provide: 'BaseURL', useValue: baseURL},
-    FavoriteProvider
+    FavoriteProvider,
+    LocalNotifications
   ]
 })
 export class AppModule {}
