@@ -7,6 +7,7 @@ import { Dish } from '../../shared/dish';
 import {FavoriteProvider} from "../../providers/favorite/favorite";
 import {CommentPage} from "../comment/comment";
 import {Storage} from "@ionic/storage";
+import {SocialSharing} from "@ionic-native/social-sharing";
 
 /**
  * Generated class for the DishdetailPage page.
@@ -35,6 +36,7 @@ export class DishdetailPage {
               private loadingCtrl: LoadingController,
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
+              private socialSharing: SocialSharing,
               private storage: Storage,
               @Inject('BaseURL') private BaseURL2) {
     this.BaseURL = this.BaseURL2;
@@ -135,6 +137,22 @@ export class DishdetailPage {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Share via Facebook',
+          handler: () => {
+            this.socialSharing.shareViaFacebook(this.dish.name + ' -- ' + this.dish.description, this.BaseURL + this.dish.image, '')
+              .then(() => console.log('Posted successfully to Facebook'))
+              .catch(() => console.log('Failed to post to Facebook'));
+          }
+        },
+        {
+          text: 'Share via Twitter',
+          handler: () => {
+            this.socialSharing.shareViaTwitter(this.dish.name + ' -- ' + this.dish.description, this.BaseURL + this.dish.image, '')
+              .then(() => console.log('Posted successfully to Twitter'))
+              .catch(() => console.log('Failed to post to Twitter'));
           }
         }
       ]

@@ -24,6 +24,11 @@ import { FavoriteProvider } from '../providers/favorite/favorite';
 import {CommentPage} from "../pages/comment/comment";
 import {LoginPage} from "../pages/login/login";
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { EmailComposer } from '@ionic-native/email-composer';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import {Camera} from "@ionic-native/camera";
+import { Network } from '@ionic-native/network';
+import {RegisterPage} from "../pages/register/register";
 
 @NgModule({
   declarations: [
@@ -36,7 +41,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
     FavoritesPage,
     ReservationPage,
     CommentPage,
-    LoginPage
+    LoginPage,
+    RegisterPage
   ],
   imports: [
     BrowserModule,
@@ -55,7 +61,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
     FavoritesPage,
     ReservationPage,
     CommentPage,
-    LoginPage
+    LoginPage,
+    RegisterPage
   ],
   providers: [
     StatusBar,
@@ -67,7 +74,11 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
     PromotionProvider,
     {provide: 'BaseURL', useValue: baseURL},
     FavoriteProvider,
-    LocalNotifications
+    LocalNotifications,
+    EmailComposer,
+    SocialSharing,
+    Camera,
+    Network
   ]
 })
 export class AppModule {}
