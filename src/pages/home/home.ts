@@ -42,19 +42,29 @@ export class HomePage implements OnInit{
     this.selectedCategory = this.categories[0];
 
     // Check which arrows should be shown
-    this.showLeftButton = false;
-    this.showRightButton = this.categories.length > 3;
+    this.showLeftButton = true;
+    this.showRightButton = true;
   }
 
   public filterData(categoryId: number): void {
-    // Handle what to do when a category is selected
+    if(categoryId !==0){
+      var catArray = ['Home', 'SEO', 'SEM', 'Analytics', 'Content Marketing', 'Mobile', 'Social Media Marketing', 'Google Adwords', 'Facebook', 'India Jobs', 'International Jobs', 'Freelancing Jobs', 'AI/Machine Learning', 'Startups', 'Digital Marketing Tips'];
+      this.selectedCategory = {id: categoryId, name: catArray[categoryId]};
+      this.dishservice.getDishesCategory(categoryId)
+        .subscribe(dishes =>  {this.dishes = dishes; console.log('____'); console.log(dishes);}, errmess => this.dishErrMsg = <any>errmess);
+    }
+    else{
+      var catArray = ['Home', 'SEO', 'SEM', 'Analytics', 'Content Marketing', 'Mobile', 'Social Media Marketing', 'Google Adwords', 'Facebook', 'India Jobs', 'International Jobs', 'Freelancing Jobs', 'AI/Machine Learning', 'Startups', 'Digital Marketing Tips'];
+      this.selectedCategory = {id: categoryId, name: catArray[categoryId]};
+      this.dishservice.getDishes()
+        .subscribe(dishes =>  {this.dishes = dishes; console.log('____'); console.log(dishes);}, errmess => this.dishErrMsg = <any>errmess);
+    }
   }
 
   // Method executed when the slides are changed
   public slideChanged(): void {
     let currentIndex = this.slides.getActiveIndex();
-    this.showLeftButton = currentIndex !== 0;
-    this.showRightButton = currentIndex !== Math.ceil(this.slides.length() / 3);
+    //alert(currentIndex);
   }
 
   // Method that shows the next slide
@@ -216,7 +226,7 @@ return 'heart-outline';
   }
 
   ngOnInit(){
-  this.selectedCategory = {id: 1, name: 'Cat1'};
+    this.selectedCategory = {id: 0, name: 'Home'};
 
     var catArray = ['Home', 'SEO', 'SEM', 'Analytics', 'Content Marketing', 'Mobile', 'Social Media Marketing', 'Google Adwords', 'Facebook', 'India Jobs', 'International Jobs', 'Freelancing Jobs', 'AI/Machine Learning', 'Startups', 'Digital Marketing Tips'];
     this.categories = [];

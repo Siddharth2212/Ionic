@@ -27,6 +27,12 @@ export class DishProvider {
       .catch(error => {return this.processHttpmsgProvider.handleError(error)});
   }
 
+  getDishesCategory(cat): Observable<Dish[]> {
+    return this.http.get(baseURL + 'getapproveddatamobilecategory?category='+cat)
+      .map(res => {return this.processHttpmsgProvider.extractData(res)})
+      .catch(error => {return this.processHttpmsgProvider.handleError(error)});
+  }
+
   getFavoriteDishes(): Observable<Dish[]> {
     return this.http.get(baseURL + 'getfavoritesmobile?userid=siddharthsogani22@gmail.com')
       .map(res => {return this.processHttpmsgProvider.extractData(res)})
