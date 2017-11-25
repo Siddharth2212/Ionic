@@ -22,7 +22,25 @@ export class DishProvider {
   }
 
   getDishes(): Observable<Dish[]> {
-    return this.http.get(baseURL + 'dishes')
+    return this.http.get(baseURL + 'getapproveddatamobile')
+      .map(res => {return this.processHttpmsgProvider.extractData(res)})
+      .catch(error => {return this.processHttpmsgProvider.handleError(error)});
+  }
+
+  getFavoriteDishes(): Observable<Dish[]> {
+    return this.http.get(baseURL + 'getfavoritesmobile?userid=siddharthsogani22@gmail.com')
+      .map(res => {return this.processHttpmsgProvider.extractData(res)})
+      .catch(error => {return this.processHttpmsgProvider.handleError(error)});
+  }
+
+  addToFavorites(newsid, userid): Observable<Dish[]> {
+    return this.http.get(baseURL + 'updatefavorite?id='+newsid+'&userid='+userid)
+      .map(res => {return this.processHttpmsgProvider.extractData(res)})
+      .catch(error => {return this.processHttpmsgProvider.handleError(error)});
+  }
+
+  deleteFavorite(newsid, userid): Observable<Dish[]> {
+    return this.http.get(baseURL + 'updatefavorite2?id='+newsid+'&userid='+userid)
       .map(res => {return this.processHttpmsgProvider.extractData(res)})
       .catch(error => {return this.processHttpmsgProvider.handleError(error)});
   }

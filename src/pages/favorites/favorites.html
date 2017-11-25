@@ -14,16 +14,16 @@
 
   <div *ngIf="favorites">
     <ion-list>
-      <ion-item-sliding *ngFor="let favorite of favorites" #item>
+      <ion-item-sliding *ngFor="let favorite of favorites" #slidingItem>
         <ion-item>
           <ion-thumbnail item-left>
-            <img src="{{BaseURL + favorite.image}}" />
+            <img src="{{getImg(favorite.category)}}" />
           </ion-thumbnail>
-          <h3>{{ favorite.name }}</h3>
-          <p>{{ favorite.description }}</p>
+          <h3>{{ favorite.approved_title }}</h3>
+          <p>{{ favorite.approved_description }}</p>
         </ion-item>
         <ion-item-options side="right">
-          <button ion-button color="danger" (click)="deleteFavorite(item, favorite.id)">
+          <button ion-button color="danger" (click)="deleteFavorite(slidingItem, favorite)">
             <ion-icon name="trash"></ion-icon>
           </button>
         </ion-item-options>

@@ -5,4 +5,37 @@ page-home {
   .btn-linkedin{color:#fff!important;background-color:#007bb6!important;}
   .btn-twitter{color:#fff!important;background-color:#55acee!important;}
   .btn-mail{color:#fff!important;background-color:#512DA8!important;}
+  .btn-whatsapp{color:#fff!important;background-color:#25d366!important;}
+  .linksource{
+    text-decoration: none;
+  }
+  .filters {
+
+    ion-col {
+      text-align: center;
+      font-size: 1.6rem;
+      line-height: 1.6rem;
+
+      ion-icon {
+        color: #ccc;
+      }
+
+      &.col-with-arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    p {
+      color: #fff;
+      margin: 0;
+      font-size: 1.6rem;
+      line-height: 1.6rem;
+    }
+
+    .selected {
+      font-weight: 700;
+    }
+  }
 }

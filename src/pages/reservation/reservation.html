@@ -13,33 +13,38 @@
         <ion-icon name="md-close" showWhen="android, windows"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title>Reserve Table</ion-title>
+    <ion-title>Ask a Question</ion-title>
   </ion-toolbar>
 
 </ion-header>
 
-
 <ion-content padding>
-  <form [formGroup]="reservation" (ngSubmit)="onSubmit()">
+  <ion-card>
+
     <ion-item>
-      <ion-label>No. of Guests</ion-label>
-      <ion-select formControlName="guests">
-        <ion-option value=1>1</ion-option>
-        <ion-option value=2>2</ion-option>
-        <ion-option value=3>3</ion-option>
-        <ion-option value=4>4</ion-option>
-        <ion-option value=5>5</ion-option>
-        <ion-option value=6>6</ion-option>
-      </ion-select>
+      <ion-avatar item-start>
+        <img src="http://www.newsapp.io/gplusimage.jpg">
+      </ion-avatar>
+      <h2>Amitabh Verma</h2>
+      <p>Digital Marketer</p>
     </ion-item>
-    <ion-item>
-      <ion-label>Smoking?</ion-label>
-      <ion-toggle formControlName="smoking" checked="true"></ion-toggle>
-    </ion-item>
-    <ion-item>
-      <ion-label>Date and Time</ion-label>
-      <ion-datetime displayFormat="MMM DD, YYYY hh:mm A" pickerFormat="MMM DD, YYYY hh:mm A" formControlName="dateTime"></ion-datetime>
-    </ion-item>
-    <button ion-button type="submit" [disabled]="!reservation.valid">Reserve</button>
-  </form>
+
+    <ion-card-content>
+      <p>
+        Entrepreneur, Ex-Googler and Top 100 Digital marketer in India helping professionals and businesses through consulting, executing and training on Digital Marketing.
+      </p>
+    </ion-card-content>
+
+    <ion-row>
+      <ion-col>
+        <form [formGroup]="reservation" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-textarea rows="8" placeholder="Enter your question"></ion-textarea>
+          </ion-item>
+          <button ion-button type="submit" [disabled]="!reservation.valid">Ask question</button>
+        </form>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
 </ion-content>

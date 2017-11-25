@@ -1,3 +1,11 @@
+<!--<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Home</ion-title>
+  </ion-navbar>
+</ion-header>-->
 <ion-header>
   <ion-navbar color="primary">
     <button ion-button menuToggle>
@@ -5,88 +13,90 @@
     </button>
     <ion-title>Home</ion-title>
   </ion-navbar>
+  <ion-searchbar
+    style="background: #80CBC4;"
+    [(ngModel)]="myInput"
+    [showCancelButton]="shouldShowCancel"
+    (ionInput)="onInput($event)"
+    (ionCancel)="onCancel($event)">
+  </ion-searchbar>
+  <ion-toolbar color="primary-light">
+    <ion-row class="filters">
+      <ion-col class="col-with-arrow" (click)="slidePrev()" no-padding col-1>
+        <ion-icon *ngIf="showLeftButton" name="arrow-back"></ion-icon>
+      </ion-col>
+      <ion-col no-padding col-10>
+        <ion-slides (ionSlideDidChange)="slideChanged()" slidesPerView="3">
+          <ion-slide (click)="filterData(category.id)" *ngFor="let category of categories">
+            <p [class.selected]="selectedCategory?.id === category.id">{{ category.name }}</p>
+          </ion-slide>
+        </ion-slides>
+      </ion-col>
+      <ion-col class="col-with-arrow" (click)="slideNext()" no-padding col-1>
+        <ion-icon *ngIf="showRightButton" name="arrow-forward"></ion-icon>
+      </ion-col>
+    </ion-row>
+
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-grid>
   <ion-row align-items-center>
     <ion-col col-12 col-lg-4>
-  <ion-card *ngIf="dish">
-    <img src="{{BaseURL + dish.image}}"/>
-    <ion-card-content>
-      <ion-card-title>
-        {{dish.name | uppercase}}
-      </ion-card-title>
-      <p>
-        {{dish.description}}
-      </p>
-    </ion-card-content>
-  </ion-card>
-  <div [hidden]="dish || dishErrMess">
+      <ion-card *ngFor="let dish of dishes">
+        <img src="{{getImg(dish.category)}}"/>
+        <ion-card-content>
+          <ion-card-title>
+            {{dish.approved_title | uppercase}}
+          </ion-card-title>
+          <p>
+            {{dish.approved_description}}
+          </p>
+        </ion-card-content>
+        <ion-row>
+          <ion-col text-left>
+            <ion-note>
+              {{timeSince(dish.date)}} ago
+            </ion-note>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            Read more at <a class="linksource" href="{{dish.link}}">{{getDishLink(dish)}}</a>
+          </ion-col>
+        </ion-row>
+        <br><br><br>
+        <ion-row>
+          <ion-col>
+            <ion-fab left bottom>
+              <button ion-fab color="accent"><ion-icon name="arrow-dropup"></ion-icon></button>
+              <ion-fab-list side="top">
+                <button ion-fab class="btn-google-plus"><ion-icon name="logo-googleplus"></ion-icon></button>
+                <button ion-fab class="btn-twitter"><ion-icon name="logo-twitter"></ion-icon></button>
+                <button ion-fab class="btn-facebook"><ion-icon name="logo-facebook"></ion-icon></button>
+                <button ion-fab class="btn-linkedin"><ion-icon name="logo-linkedin"></ion-icon></button>
+                <button ion-fab class="btn-whatsapp"><ion-icon name="logo-whatsapp"></ion-icon></button>
+              </ion-fab-list>
+            </ion-fab>
+          </ion-col>
+          <ion-col>
+            <ion-fab right bottom>
+              <button *ngIf="isFavorite(dish)" ion-fab><ion-icon [name]="getFavIcon(dish)"></ion-icon></button>
+              <button (click)="addToFavorites(dish)" *ngIf="!isFavorite(dish)" ion-fab><ion-icon name="heart-outline"></ion-icon></button>
+            </ion-fab>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+  <div [hidden]="dishes || dishErrMsg">
     <ion-spinner></ion-spinner>
     <h4>Loading . . . Please Wait</h4>
   </div>
-  <div *ngIf="dishErrMess">
+  <div *ngIf="dishErrMsg">
     <h2>Error</h2>
-    <h4>{{dishErrMess}}</h4>
-  </div>
-    </ion-col>
-    <ion-col col-12 col-lg-4>
-  <ion-card *ngIf="promotion">
-    <img src="{{BaseURL + promotion.image}}"/>
-    <ion-card-content>
-      <ion-card-title>
-        {{promotion.name | uppercase}}
-      </ion-card-title>
-      <p>
-        {{promotion.description}}
-      </p>
-    </ion-card-content>
-  </ion-card>
-  <div [hidden]="promotion || promoErrMess">
-    <ion-spinner></ion-spinner>
-    <h4>Loading . . . Please Wait</h4>
-  </div>
-  <div *ngIf="promoErrMess">
-    <h2>Error</h2>
-    <h4>{{promoErrMess}}</h4>
-  </div>
-    </ion-col>
-    <ion-col col-12 col-lg-4>
-  <ion-card *ngIf="leader">
-    <img src="{{BaseURL + leader.image}}"/>
-    <ion-card-content>
-      <ion-card-title>
-        {{leader.name | uppercase}}
-      </ion-card-title>
-      <p>
-        {{leader.designation}}
-      </p>
-      <p>
-        {{leader.description}}
-      </p>
-    </ion-card-content>
-  </ion-card>
-  <div [hidden]="leader || leaderErrMess">
-    <ion-spinner></ion-spinner>
-    <h4>Loading . . . Please Wait</h4>
-  </div>
-  <div *ngIf="leaderErrMess">
-    <h2>Error</h2>
-    <h4>{{leaderErrMess}}</h4>
+    <h4>{{dishErrMsg}}</h4>
   </div>
     </ion-col>
   </ion-row>
   </ion-grid>
-  <ion-fab right bottom>
-    <button ion-fab color="accent"><ion-icon name="arrow-dropup"></ion-icon></button>
-    <ion-fab-list side="top">
-      <button ion-fab class="btn-mail"><ion-icon name="mail"></ion-icon></button>
-      <button ion-fab class="btn-google-plus"><ion-icon name="logo-googleplus"></ion-icon></button>
-      <button ion-fab class="btn-youtube"><ion-icon name="logo-youtube"></ion-icon></button>
-      <button ion-fab class="btn-twitter"><ion-icon name="logo-twitter"></ion-icon></button>
-      <button ion-fab class="btn-facebook"><ion-icon name="logo-facebook"></ion-icon></button>
-      <button ion-fab class="btn-linkedin"><ion-icon name="logo-linkedin"></ion-icon></button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
